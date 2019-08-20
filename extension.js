@@ -10,27 +10,27 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
-    var disposable = vscode.commands.registerTextEditorCommand('extension.remToPx', function (textEditor, textEditorEdit) {
-        const config = vscode.workspace.getConfiguration("px-to-rem");
-        const pxPerRem = config.get('px-per-rem');
-        var regexStr = "([0-9]*\\.?[0-9]+)rem";
-        placeholder(regexStr, (match, value) => `${rem2Px(value, pxPerRem)}px`, textEditor, textEditorEdit);
+    var disposable = vscode.commands.registerTextEditorCommand('extension.emToPx', function (textEditor, textEditorEdit) {
+        const config = vscode.workspace.getConfiguration("px-to-em");
+        const pxPerEm = config.get('px-per-em');
+        var regexStr = "([0-9]*\\.?[0-9]+)em";
+        placeholder(regexStr, (match, value) => `${em2Px(value, pxPerEm)}px`, textEditor, textEditorEdit);
     });
     context.subscriptions.push(disposable);
 
-    disposable = vscode.commands.registerTextEditorCommand('extension.pxToRem', function (textEditor, textEditorEdit) {
-        const config = vscode.workspace.getConfiguration("px-to-rem");
-        const pxPerRem = config.get('px-per-rem');
+    disposable = vscode.commands.registerTextEditorCommand('extension.pxToEm', function (textEditor, textEditorEdit) {
+        const config = vscode.workspace.getConfiguration("px-to-em");
+        const pxPerEm = config.get('px-per-em');
         var regexStr = "([0-9]*\\.?[0-9]+)px";
-        placeholder(regexStr, (match, value) => `${px2Rem(value, pxPerRem)}rem`, textEditor, textEditorEdit);
+        placeholder(regexStr, (match, value) => `${px2Em(value, pxPerEm)}em`, textEditor, textEditorEdit);
     });
     context.subscriptions.push(disposable);
 
-    disposable = vscode.commands.registerTextEditorCommand('extension.pxToremAndRemToPx', function (textEditor, textEditorEdit) {
-        const config = vscode.workspace.getConfiguration("px-to-rem");
-        const pxPerRem = config.get('px-per-rem');
-        var regexStr = "([0-9]*\\.?[0-9]+)(px|rem)";
-        placeholder(regexStr, (match, value, unit) => unit == "px" ? `${px2Rem(value, pxPerRem)}rem` : `${rem2Px(value, pxPerRem)}px`, textEditor, textEditorEdit);
+    disposable = vscode.commands.registerTextEditorCommand('extension.pxToemAndEmToPx', function (textEditor, textEditorEdit) {
+        const config = vscode.workspace.getConfiguration("px-to-em");
+        const pxPerEm = config.get('px-per-em');
+        var regexStr = "([0-9]*\\.?[0-9]+)(px|em)";
+        placeholder(regexStr, (match, value, unit) => unit == "px" ? `${px2Em(value, pxPerEm)}em` : `${em2Px(value, pxPerEm)}px`, textEditor, textEditorEdit);
     });
     context.subscriptions.push(disposable);
 }
@@ -40,19 +40,19 @@ exports.activate = activate;
 function deactivate() {
 }
 
-function px2Rem(px, pxPerRem) {
-    if (pxPerRem == 0) { return 0; }
-    const config = vscode.workspace.getConfiguration("px-to-rem");
+function px2Em(px, pxPerEm) {
+    if (pxPerEm == 0) { return 0; }
+    const config = vscode.workspace.getConfiguration("px-to-em");
     var maxDecimals = config.get('number-of-decimals-digits');
     maxDecimals = Math.max(0, maxDecimals);
-    const value = parseFloat((px / pxPerRem).toFixed(maxDecimals));
+    const value = parseFloat((px / pxPerEm).toFixed(maxDecimals));
     return value;
 }
-function rem2Px(rem, pxPerRem) {
-    const config = vscode.workspace.getConfiguration("px-to-rem");
+function em2Px(em, pxPerEm) {
+    const config = vscode.workspace.getConfiguration("px-to-em");
     var maxDecimals = config.get('number-of-decimals-digits');
     maxDecimals = Math.max(0, maxDecimals);
-    const value = parseFloat((rem * pxPerRem).toFixed(maxDecimals));
+    const value = parseFloat((em * pxPerEm).toFixed(maxDecimals));
     return value;
 }
 
@@ -64,7 +64,7 @@ function placeholder(regexString, replaceFunction, textEditor, textEditorEdit) {
     // Check if there is some text selected
     if (selections.length == 0 || selections.reduce((acc, val) => acc || val.isEmpty), false) { return; }
     // Get configuration options
-    const config = vscode.workspace.getConfiguration("px-to-rem");
+    const config = vscode.workspace.getConfiguration("px-to-em");
     const onlyChangeFirst = config.get('only-change-first-ocurrence');
     const warningIfNoChanges = config.get('notify-if-no-changes');
     const changesMade = new Map();
